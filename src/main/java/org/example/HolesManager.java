@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExcelUtility {
+public class HolesManager {
     private static final int START_SHEET = 0;
     private static final int START_CELL = 1;
     private static final int X_CELL = 1;
@@ -44,8 +44,13 @@ public class ExcelUtility {
     private static void addDiaAndDeep(Cell cell, Hole hole) {
         String value = cell.getStringCellValue().replace(',', '.');
         String[] values = value.split("x");
-        hole.setDiameter(Double.parseDouble(
-                values[0].substring(1)));
+        double dia = Double.parseDouble(values[0]
+                .substring(1));
+        if (dia == 18.0) {
+            hole.setDiameter(20.0);
+        } else {
+            hole.setDiameter(dia);
+        }
         hole.setDeep(Double.parseDouble(values[1]));
     }
 
