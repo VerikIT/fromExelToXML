@@ -1,4 +1,6 @@
-package org.example.entity;
+package org.example;
+
+import org.example.entity.Detail;
 
 import java.util.ArrayList;
 import java.util.List;
