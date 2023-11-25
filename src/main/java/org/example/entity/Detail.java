@@ -17,9 +17,11 @@ public class Detail {
     private int amount;
     private int multiplicity = 1;
     private List<Hole> frontHoles = new ArrayList<>();
-    private List<Hole> beckHoles = new ArrayList<>();
+    private List<Hole> backHoles = new ArrayList<>();
     private List<Hole> leftHoles = new ArrayList<>();
     private List<Hole> rightHoles = new ArrayList<>();
     private List<Hole> upHoles = new ArrayList<>();
     private List<Hole> downHoles = new ArrayList<>();
+
+
 }
