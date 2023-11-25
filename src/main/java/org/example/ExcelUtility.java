@@ -1,19 +1,12 @@
 package org.example;
 
-import java.io.File;
-import java.io.FileInputStream;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.example.entity.Hole;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.example.entity.Hole;
 
 public class ExcelUtility {
     private static final int START_SHEET = 0;
@@ -25,8 +18,7 @@ public class ExcelUtility {
 
     public static List<Hole> readHolesFromExcel(String filePath) throws IOException {
         List<Hole> holes = new ArrayList<>();
-        try (FileInputStream inputStream = new FileInputStream(filePath);
-             Workbook workBook = new XSSFWorkbook(inputStream)) {
+        try (Workbook workBook = new XSSFWorkbook(filePath)) {
             Sheet sheet = workBook.getSheetAt(START_SHEET);
             int firstRow = sheet.getFirstRowNum();
             int lastRow = sheet.getLastRowNum();
@@ -46,7 +38,6 @@ public class ExcelUtility {
         } catch (IOException e) {
             throw e;
         }
-
         return holes;
     }
 
@@ -62,12 +53,7 @@ public class ExcelUtility {
         CellType cellType = cell.getCellType();
         if (cellType.equals(CellType.STRING)) {
             String value = cell.getStringCellValue().replace(',', '.');
-            try {
-                return Double.parseDouble(value);
-            } catch (NumberFormatException | NullPointerException e) {
-                e.printStackTrace();
-            }
-
+            return Double.parseDouble(value);
         } else if (cellType.equals(CellType.NUMERIC)) {
             return cell.getNumericCellValue();
         }

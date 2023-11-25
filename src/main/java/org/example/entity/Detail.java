@@ -16,8 +16,10 @@ public class Detail {
     private double width;
     private int amount;
     private int multiplicity = 1;
-    private List<Hole> holes = new ArrayList<>();
-    public void addHole(Hole hole){
-        holes.add(hole);
-    }
+    private List<Hole> frontHoles = new ArrayList<>();
+    private List<Hole> beckHoles = new ArrayList<>();
+    private List<Hole> leftHoles = new ArrayList<>();
+    private List<Hole> rightHoles = new ArrayList<>();
+    private List<Hole> upHoles = new ArrayList<>();
+    private List<Hole> downHoles = new ArrayList<>();
 }
