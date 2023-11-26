@@ -32,7 +32,7 @@ public class ExcelManager {
                     switch (cellIndex) {
                         case 1 -> detail.setProductName(getStringCellValue(cell));
                         case 2 -> detail.setName(getStringCellValue(cell));
-                        case 3 -> detail.setLength(getDoubleCellValue(cell));
+                        case 3 -> detail.setHeight(getDoubleCellValue(cell));
                         case 4 -> detail.setWidth(getDoubleCellValue(cell));
                         case 6 -> detail.setAmount((int) getDoubleCellValue(cell));
 

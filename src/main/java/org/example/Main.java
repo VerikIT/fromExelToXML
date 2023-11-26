@@ -14,6 +14,9 @@ public class Main {
         String path = "D:\\OneDrive\\Java\\XLStoXML\\excel\\изделия\\ШК";
 //        String path = SCANNER.nextLine();
       var details=  DetailsManager.getDetails(path);
-        System.out.println("ok");
+//    var bilder=  Converter.getXmlByDetails(details);
+//        System.out.println(bilder);
+        Converter.saveXmlByDetailsToFile(details);
+
     }
 }
