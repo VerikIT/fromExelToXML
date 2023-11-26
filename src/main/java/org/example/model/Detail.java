@@ -1,4 +1,4 @@
-package org.example.entity;
+package org.example.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 public class Detail {
     private String name;
+    private String productName;
     private double length;
     private double width;
     private int amount;
@@ -22,6 +23,4 @@ public class Detail {
     private List<Hole> rightHoles = new ArrayList<>();
     private List<Hole> upHoles = new ArrayList<>();
     private List<Hole> downHoles = new ArrayList<>();
-
-
 }
