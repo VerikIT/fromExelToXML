@@ -11,7 +11,7 @@ public class Main {
 //        String path = "D:\\OneDrive\\Java\\XLStoXML\\excel\\1-F.xlsx";
 //        var holes = ExcelUtility.readHolesFromExcel(path);
         //        System.out.print(holes);
-        String path = "D:\\OneDrive\\Java\\XLStoXML\\excel\\prod\\івапір";
+        String path = "D:\\OneDrive\\Java\\XLStoXML\\excel\\prod\\шк";
 //        String path = SCANNER.nextLine();
       var details=  DetailsManager.getDetails(path);
 //    var bilder=  Converter.getXmlByDetails(details);

@@ -78,38 +78,46 @@ public class ExcelManager {
         return holes;
     }
 
-/*    private static void addDiaAndDeep(Cell cell, Hole hole) {
+    /*    private static void addDiaAndDeep(Cell cell, Hole hole) {
+            String value = cell.getStringCellValue().replace(',', '.');
+            String[] values = value.split("x");
+            double dia = Double.parseDouble(values[0]
+                    .substring(1));
+            if (dia == 18.0) {
+                hole.setDiameter(20.0);
+            } else {
+                hole.setDiameter(dia);
+            }
+            hole.setDeep(Double.parseDouble(values[1]));
+        }*/
+    private static void addDiaAndDeep(Cell cell, Hole hole) {
         String value = cell.getStringCellValue().replace(',', '.');
-        String[] values = value.split("x");
-        double dia = Double.parseDouble(values[0]
-                .substring(1));
-        if (dia == 18.0) {
-            hole.setDiameter(20.0);
+        String[] values = value.split(SPLITERATOR);
+        if (values.length == 2) {
+            double dia = Double.parseDouble(values[0]
+                    .substring(10));
+            if (dia == 18.0) {
+                hole.setDiameter(20.0);
+            } else {
+                hole.setDiameter(dia);
+            }
+            hole.setDeep(Double.parseDouble(values[1]));
         } else {
-            hole.setDiameter(dia);
-        }
-        hole.setDeep(Double.parseDouble(values[1]));
-    }*/
-private static void addDiaAndDeep(Cell cell, Hole hole) {
-    String value = cell.getStringCellValue().replace(',', '.');
-    String[] values = value.split(SPLITERATOR);
-    if (values.length==2) {
-        double dia = Double.parseDouble(values[0]
-                .substring(10));
-        if (dia == 18.0) {
-            hole.setDiameter(20.0);
-        } else {
-            hole.setDiameter(dia);
-        }
-        hole.setDeep(Double.parseDouble(values[1]));
-    }else {
-        double dia = Double.parseDouble(values[0]
-                .substring(10));
-        hole.setDiameter(dia);
-        hole.setDeep(34.0);
-    }
 
-}
+            if (values[0].contains("НАСКВОЗЬ")) {
+                String oneValue = values[0].replace(" НАСКВОЗЬ", "");
+                double dia = Double.parseDouble(oneValue.substring(10));
+                hole.setDiameter(dia);
+                hole.setDeep(30.0);
+            } else {
+                double dia = Double.parseDouble(values[0]
+                        .substring(10));
+                hole.setDiameter(dia);
+                hole.setDeep(34.0);
+            }
+        }
+
+    }
 
     private static double getDoubleCellValue(Cell cell) {
         CellType cellType = cell.getCellType();

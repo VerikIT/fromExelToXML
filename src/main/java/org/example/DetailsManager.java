@@ -27,11 +27,15 @@ public class DetailsManager {
 
         for (var detail : details) {
             var detPath = detailsPathList.stream()
-                    .filter(path -> path.toFile().getName().equalsIgnoreCase(detail.getName()))
+//                    .filter(path -> path.toFile().getName().equalsIgnoreCase(detail.getName()))
+                    .filter(path ->detail.getName().contains(path.toFile().getName()))
                     .findFirst()
                     .get();
 
             var sidePathList = Files.list(detPath).toList();
+            if (sidePathList.isEmpty()) {
+                continue;
+            }
             for (var sidePath : sidePathList) {
                 var holes = ExcelManager.readHolesFromExcel(sidePath.toString());
                 addHolesToSideDetail(detail, holes, sidePath);
