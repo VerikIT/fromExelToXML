@@ -27,8 +27,7 @@ public class DetailsManager {
 
         for (var detail : details) {
             var detPath = detailsPathList.stream()
-//                    .filter(path -> path.toFile().getName().equalsIgnoreCase(detail.getName()))
-                    .filter(path ->detail.getName().contains(path.toFile().getName()))
+                    .filter(path -> detail.getName().contains(path.toFile().getName()))
                     .findFirst()
                     .get();
 
