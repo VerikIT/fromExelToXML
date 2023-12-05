@@ -72,15 +72,17 @@ public class ExcelManager {
                         case DIA_CELL -> addDiaAndDeep(cell, hole);
                     }
                 }
-                holes.add(hole);
+                if (hole.getDeep() != 0.0 && hole.getDiameter() != 0.0) {
+                    holes.add(hole);
+                }
             }
         }
         return holes;
     }
 
-    /*    private static void addDiaAndDeep(Cell cell, Hole hole) {
-            String value = cell.getStringCellValue().replace(',', '.');
-            String[] values = value.split("x");
+    private static void parseDiaAndDeepHandleTable(String value, Hole hole) {
+        String[] values = value.split("x");
+        if (values.length == 2) {
             double dia = Double.parseDouble(values[0]
                     .substring(1));
             if (dia == 18.0) {
@@ -89,9 +91,33 @@ public class ExcelManager {
                 hole.setDiameter(dia);
             }
             hole.setDeep(Double.parseDouble(values[1]));
-        }*/
+        } else {
+            if (values[0].contains("НАСКВОЗЬ")) {
+                String oneValue = values[0].replace(" НАСКВОЗЬ", "");
+                double dia = Double.parseDouble(oneValue.substring(1));
+                hole.setDiameter(dia);
+                hole.setDeep(30.0);
+            } else {
+                double dia = Double.parseDouble(values[0]
+                        .substring(1));
+                if (dia == 8.0) {
+                    hole.setDiameter(dia);
+                    hole.setDeep(33.0);
+                }
+            }
+        }
+    }
+
     private static void addDiaAndDeep(Cell cell, Hole hole) {
         String value = cell.getStringCellValue().replace(',', '.');
+        if (value.contains("x") || value.contains("n")) {
+            parseDiaAndDeepHandleTable(value, hole);
+        } else {
+            parseDiaAndDeepAutoTable(value, hole);
+        }
+    }
+
+    private static void parseDiaAndDeepAutoTable(String value, Hole hole) {
         String[] values = value.split(SPLITERATOR);
         if (values.length == 2) {
             double dia = Double.parseDouble(values[0]
@@ -112,11 +138,12 @@ public class ExcelManager {
             } else {
                 double dia = Double.parseDouble(values[0]
                         .substring(10));
-                hole.setDiameter(dia);
-                hole.setDeep(34.0);
+                if (dia == 8.0) {
+                    hole.setDiameter(dia);
+                    hole.setDeep(33.0);
+                }
             }
         }
-
     }
 
     private static double getDoubleCellValue(Cell cell) {
