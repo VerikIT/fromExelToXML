@@ -17,6 +17,7 @@ public class ExcelManager {
     private static final int X_CELL = 1;
     private static final int Y_CELL = 2;
     private static final int DIA_CELL = 3;
+    private static final String SPLITERATOR = "<HOLE-DEPTH>";
 
     public static List<Detail> readProductDetailsFromFile(File prodFile) throws IOException {
         List<Detail> details = new ArrayList<>();
@@ -77,7 +78,7 @@ public class ExcelManager {
         return holes;
     }
 
-    private static void addDiaAndDeep(Cell cell, Hole hole) {
+/*    private static void addDiaAndDeep(Cell cell, Hole hole) {
         String value = cell.getStringCellValue().replace(',', '.');
         String[] values = value.split("x");
         double dia = Double.parseDouble(values[0]
@@ -88,7 +89,27 @@ public class ExcelManager {
             hole.setDiameter(dia);
         }
         hole.setDeep(Double.parseDouble(values[1]));
+    }*/
+private static void addDiaAndDeep(Cell cell, Hole hole) {
+    String value = cell.getStringCellValue().replace(',', '.');
+    String[] values = value.split(SPLITERATOR);
+    if (values.length==2) {
+        double dia = Double.parseDouble(values[0]
+                .substring(10));
+        if (dia == 18.0) {
+            hole.setDiameter(20.0);
+        } else {
+            hole.setDiameter(dia);
+        }
+        hole.setDeep(Double.parseDouble(values[1]));
+    }else {
+        double dia = Double.parseDouble(values[0]
+                .substring(10));
+        hole.setDiameter(dia);
+        hole.setDeep(34.0);
     }
+
+}
 
     private static double getDoubleCellValue(Cell cell) {
         CellType cellType = cell.getCellType();

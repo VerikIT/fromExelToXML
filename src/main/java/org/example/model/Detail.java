@@ -17,13 +17,7 @@ public class Detail {
     private double width;
     private int amount;
     private int multiplicity = 1;
-//    private List<Hole> frontHoles = new ArrayList<>();
-//    private List<Hole> backHoles = new ArrayList<>();
-//    private List<Hole> leftHoles = new ArrayList<>();
-//    private List<Hole> rightHoles = new ArrayList<>();
-//    private List<Hole> upHoles = new ArrayList<>();
-//    private List<Hole> downHoles = new ArrayList<>();
-private List<Hole> frontHoles;
+    private List<Hole> frontHoles;
     private List<Hole> backHoles;
     private List<Hole> leftHoles;
     private List<Hole> rightHoles;

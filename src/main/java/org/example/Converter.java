@@ -3,7 +3,6 @@ package org.example;
 import org.example.model.Detail;
 import org.example.model.Hole;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -66,8 +65,8 @@ public class Converter {
             String detString = String.format(Locale.US, DETAIL_TEXT,
                     detId,
                     detail.getAmount(),
-                    detail.getWidth(),
                     detail.getHeight(),
+                    detail.getWidth(),
                     detail.getName(),
                     detail.getProductName(),
                     detail.getMultiplicity());
