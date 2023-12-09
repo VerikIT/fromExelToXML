@@ -2,16 +2,20 @@ package org.example;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.dhatim.fastexcel.Worksheet;
 import org.example.model.Detail;
 import org.example.model.Hole;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ExcelManager {
     private static final int START_SHEET = 0;
@@ -173,4 +177,63 @@ public class ExcelManager {
     }
 
 
+    public static void CreateFileWithAllDetails(String objectPath, List<Detail> allDetails) throws IOException {
+        String[] folders = objectPath.split("\\\\");
+        String fileName = folders[folders.length - 1];
+        String fileLocation = objectPath +"\\"+ fileName + ".xlsx";
+        try (Workbook workBook = new XSSFWorkbook();
+             FileOutputStream outputStream = new FileOutputStream(fileLocation)) {
+
+            Sheet sheet = workBook.createSheet(fileName);
+            sheet.setColumnWidth(0, 1000);
+
+            /*Row header = sheet.createRow(0);
+            Cell headerCell = header.createCell(0);
+            headerCell.setCellValue("№");
+            headerCell = header.createCell(1);
+            headerCell.setCellValue("изделие");
+            headerCell = header.createCell(2);
+            headerCell.setCellValue("название детали");
+            headerCell = header.createCell(3);
+            headerCell.setCellValue("длина");
+            headerCell = header.createCell(4);
+            headerCell.setCellValue("ширина");
+            headerCell = header.createCell(5);
+            headerCell.setCellValue("толщина");
+            headerCell = header.createCell(6);
+            headerCell.setCellValue("количество");
+            headerCell = header.createCell(7);
+            headerCell.setCellValue("кр.В");
+            headerCell = header.createCell(8);
+            headerCell.setCellValue("кр.Н");
+            headerCell = header.createCell(9);
+            headerCell.setCellValue("кр.П");
+            headerCell = header.createCell(10);
+            headerCell.setCellValue("кр.Л");
+            headerCell = header.createCell(11);
+            headerCell.setCellValue("материал");
+            headerCell = header.createCell(12);
+            headerCell.setCellValue("примечание");*/
+            int rN = 0;
+            for (int i = 0; i < allDetails.size(); i++) {
+                var detail = allDetails.get(i);
+                Row row = sheet.createRow(rN);
+                row.createCell(0).setCellValue(i);
+                row.createCell(1).setCellValue(detail.getProductName());
+                row.createCell(2).setCellValue(detail.getName());
+                row.createCell(3).setCellValue(detail.getWidth());
+                row.createCell(4).setCellValue(detail.getHeight());
+                row.createCell(5).setCellValue(detail.getThickness());
+                row.createCell(6).setCellValue(detail.getAmount());
+                row.createCell(7).setCellValue((detail.getUpBand()==0.0) ? "-" : String.valueOf((detail.getUpBand())));
+                row.createCell(8).setCellValue((detail.getDownBand()==0.0) ? "-" : String.valueOf((detail.getDownBand())));
+                row.createCell(9).setCellValue((detail.getLeftBand()==0.0) ? "-" : String.valueOf((detail.getLeftBand())));
+                row.createCell(10).setCellValue((detail.getRightBand()==0.0) ? "-" : String.valueOf((detail.getRightBand())));
+                row.createCell(11).setCellValue(detail.getMaterial());
+                row.createCell(12).setCellValue(detail.getNote());
+                rN++;
+            }
+            workBook.write(outputStream);
+        }
+    }
 }

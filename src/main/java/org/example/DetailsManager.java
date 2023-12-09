@@ -19,9 +19,18 @@ public class DetailsManager {
     private static final String RIGHT = "п";
     private static final String UP = "в";
     private static final String DOWN = "н";
-    private static Map<String, List<Detail>> materials = new HashMap<>();
+
+    public static void createProjectsAndAllDetailTable(String objectPath) throws IOException {
+        var materialsMap = getMaterialsMap(objectPath);
+        Converter.saveXmlByDetailsToFile(materialsMap);
+        var allDetails = materialsMap.values().stream()
+                .flatMap(List::stream)
+                .toList();
+        ExcelManager.CreateFileWithAllDetails(objectPath, allDetails);
+    }
 
     public static Map<String, List<Detail>> getMaterialsMap(String objectPath) throws IOException {
+        Map<String, List<Detail>> materials = new HashMap<>();
         var prodPathList = Files.list(Path.of(objectPath))
                 .filter(path -> path.toFile().isDirectory())
                 .toList();
