@@ -9,7 +9,9 @@ import org.example.model.Hole;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ExcelManager {
     private static final int START_SHEET = 0;
@@ -35,8 +37,14 @@ public class ExcelManager {
                         case 2 -> detail.setName(getStringCellValue(cell));
                         case 3 -> detail.setHeight(getDoubleCellValue(cell));
                         case 4 -> detail.setWidth(getDoubleCellValue(cell));
+                        case 5 -> detail.setThickness(getDoubleCellValue(cell));
                         case 6 -> detail.setAmount((int) getDoubleCellValue(cell));
-
+                        case 7 -> detail.setUpBand(getDoubleCellValue(cell));
+                        case 8 -> detail.setDownBand(getDoubleCellValue(cell));
+                        case 9 -> detail.setLeftBand(getDoubleCellValue(cell));
+                        case 10 -> detail.setRightBand(getDoubleCellValue(cell));
+                        case 11 -> detail.setMaterial(getStringCellValue(cell));
+                        case 12 -> detail.setNote(getStringCellValue(cell));
                     }
                 }
                 details.add(detail);
@@ -45,14 +53,6 @@ public class ExcelManager {
             throw new RuntimeException(e);
         }
         return details;
-    }
-
-    private static String getStringCellValue(Cell cell) {
-        CellType cellType = cell.getCellType();
-        if (cellType.equals(CellType.STRING)) {
-            return cell.getStringCellValue();
-        }
-        return null;
     }
 
     public static List<Hole> readHolesFromExcel(String filePath) throws IOException {
@@ -80,6 +80,15 @@ public class ExcelManager {
         return holes;
     }
 
+    private static void addDiaAndDeep(Cell cell, Hole hole) {
+        String value = cell.getStringCellValue().replace(',', '.');
+        if (value.contains("x") || value.contains("n")) {
+            parseDiaAndDeepHandleTable(value, hole);
+        } else {
+            parseDiaAndDeepAutoTable(value, hole);
+        }
+    }
+
     private static void parseDiaAndDeepHandleTable(String value, Hole hole) {
         String[] values = value.split("x");
         if (values.length == 2) {
@@ -105,15 +114,6 @@ public class ExcelManager {
                     hole.setDeep(33.0);
                 }
             }
-        }
-    }
-
-    private static void addDiaAndDeep(Cell cell, Hole hole) {
-        String value = cell.getStringCellValue().replace(',', '.');
-        if (value.contains("x") || value.contains("n")) {
-            parseDiaAndDeepHandleTable(value, hole);
-        } else {
-            parseDiaAndDeepAutoTable(value, hole);
         }
     }
 
@@ -150,11 +150,26 @@ public class ExcelManager {
         CellType cellType = cell.getCellType();
         if (cellType.equals(CellType.STRING)) {
             String value = cell.getStringCellValue().replace(',', '.');
+            if (value.contains("-") || value.isEmpty()) {
+                return 0.0;
+            }
             return Double.parseDouble(value);
         } else if (cellType.equals(CellType.NUMERIC)) {
             return cell.getNumericCellValue();
         }
         return 0;
+    }
+
+    private static String getStringCellValue(Cell cell) {
+        CellType cellType = cell.getCellType();
+
+        if (cellType.equals(CellType.STRING)) {
+            return cell.getStringCellValue();
+        }
+        if (cellType.equals(CellType.BLANK)) {
+            return "";
+        }
+        return null;
     }
 
 

@@ -11,12 +11,15 @@ public class Main {
 //        String path = "D:\\OneDrive\\Java\\XLStoXML\\excel\\1-F.xlsx";
 //        var holes = ExcelUtility.readHolesFromExcel(path);
         //        System.out.print(holes);
-        String path = "D:\\OneDrive\\Java\\XLStoXML\\excel\\prod\\шк";
+//        String path = "D:\\OneDrive\\Java\\XLStoXML\\excel\\prod\\шк";
+        String objectPath = "D:\\OneDrive\\Java\\XLStoXML\\excel\\prod";
 //        String path = SCANNER.nextLine();
-      var details=  DetailsManager.getDetails(path);
+      var matMap=  DetailsManager.getMaterialsMap(objectPath);
+//      var details=  DetailsManager.getDetails(path);
 //    var bilder=  Converter.getXmlByDetails(details);
 //        System.out.println(bilder);
-        Converter.saveXmlByDetailsToFile(details);
+//        Converter.saveXmlByDetailsToFile(details);
+        Converter.saveXmlByDetailsToFile(matMap);
 
     }
 }

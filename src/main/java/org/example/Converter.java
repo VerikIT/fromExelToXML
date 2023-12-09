@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class Converter {
     private static final String START_TEXT = """
@@ -16,22 +17,23 @@ public class Converter {
                <viyar version="27">
                  <constructor id="dsp"/>
                  <materials>
-                   <material id="1" type="sheet" width="2800" height="2070" thickness="18" isCliental="0">
+                   <material id="1" type="sheet" width="2800" height="2070" thickness="%f" isCliental="0">
                      <parts/>
                    </material>
-                   <material id="2" type="band" height="22" thickness="0.4" markingColor="rgb(255,0,0)"/>
-                   <material id="3" type="band" height="23" thickness="2" markingColor="rgb(0,0,255)"/>
-                   <material id="4" type="band" height="43" thickness="2" markingColor="rgb(0,191,255)"/>
+                   <material id="2" type="band" height="22" thickness="0.4"/>
+                   <material id="3" type="band" height="23" thickness="1"/>
+                   <material id="4" type="band" height="23" thickness="2"/>
+                   <material id="5" type="band" height="43" thickness="2"/>
                  </materials>
                  <details>
             """;
     private static final String DETAIL_TEXT = """
-                  <detail id="%d" material="1" amount="%d" widthFull="%.1f" heightFull="%.1f" description="%s, %s" multiplicity="%d">
+                  <detail id="%d" material="1" amount="%d" widthFull="%.1f" heightFull="%.1f" description="%s, %s" multiplicity="%d"  grain="1">
                     <edges joint="0">
-                      <left type="" param="0"/>
-                      <top type="kromka" param="3"/>
-                      <right type="" param="0"/>
-                      <bottom type="kromka" param="2"/>
+                      <left type="kromka" param="%d"/>
+                      <top type="kromka" param="%d"/>
+                      <right type="kromka" param="%d"/>
+                      <bottom type="kromka" param="%d"/>
             """;
     private static final String BETWEEN_DET_OP = """
                     </edges>
@@ -51,9 +53,21 @@ public class Converter {
             </project>
             """;
 
+    public static void saveXmlByDetailsToFile(Map<String, List<Detail>> materials) throws IOException {
+        for (var material : materials.keySet()) {
+            var detailList = materials.get(material);
+            var stringBuilder = getXmlByDetails(detailList);
+            Path savePath = Path.of(material + ".project");
+            Files.writeString(savePath, stringBuilder);
+            System.out.println("file saved successfully " + savePath.toFile().getAbsolutePath());
+        }
+    }
+
     private static StringBuilder getXmlByDetails(List<Detail> detailList) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(START_TEXT);
+        stringBuilder.append(
+                String.format(Locale.US, START_TEXT,
+                        detailList.get(0).getThickness()));
         addDetailsToBuilder(detailList, stringBuilder);
         stringBuilder.append(FINISH_TEXT);
         return stringBuilder;
@@ -69,7 +83,12 @@ public class Converter {
                     detail.getWidth(),
                     detail.getName(),
                     detail.getProductName(),
-                    detail.getMultiplicity());
+                    detail.getMultiplicity(),
+                    findIdBand(detail, detail.getLeftBand()),
+                    findIdBand(detail, detail.getUpBand()),
+                    findIdBand(detail, detail.getRightBand()),
+                    findIdBand(detail, detail.getDownBand())
+            );
 
             stringBuilder.append(detString);
             stringBuilder.append(BETWEEN_DET_OP);
@@ -80,10 +99,32 @@ public class Converter {
             addOperationsToDetail(4, detail.getRightHoles(), stringBuilder);
             addOperationsToDetail(5, detail.getDownHoles(), stringBuilder);
             addOperationsToDetail(2, detail.getLeftHoles(), stringBuilder);
-
             stringBuilder.append(BETWEEN_DETAILS);
             detId++;
         }
+    }
+
+    private static int findIdBand(Detail detail, double thicknessBand) {
+        final int WITHOUT = 0;
+        if (thicknessBand == 0.0) {
+            return WITHOUT;
+        }
+        final int UNTIL_06 = 2;
+        final int UNTIL_1 = 3;
+        final int UNTIL_2 = 4;
+        final int MULTY_2_DET = 5;
+        String note = detail.getNote();
+        if (note.toLowerCase().contains("сращ")) {
+            return MULTY_2_DET;
+        }
+        if (thicknessBand <= 0.6) {
+            return UNTIL_06;
+        } else if (thicknessBand <= 1.0) {
+            return UNTIL_1;
+        } else if (thicknessBand <= 2.0) {
+            return UNTIL_2;
+        }
+        return WITHOUT;
     }
 
     private static void addOperationsToDetail(int side, List<Hole> holes, StringBuilder stringBuilder) {
@@ -101,11 +142,5 @@ public class Converter {
         }
     }
 
-    public static void saveXmlByDetailsToFile(List<Detail> detailList) throws IOException {
-        var stringBuilder = getXmlByDetails(detailList);
-        Path savePath = Path.of("details.project");
-        Files.writeString(savePath, stringBuilder);
-        System.out.println("file saved successfully " + savePath.toFile().getAbsolutePath());
-    }
 
 }
