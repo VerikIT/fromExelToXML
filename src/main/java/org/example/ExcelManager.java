@@ -2,18 +2,13 @@ package org.example;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.dhatim.fastexcel.Worksheet;
 import org.example.model.Detail;
 import org.example.model.Hole;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -187,7 +182,7 @@ public class ExcelManager {
             Sheet sheet = workBook.createSheet(fileName);
             sheet.setColumnWidth(0, 1000);
 
-            /*Row header = sheet.createRow(0);
+            Row header = sheet.createRow(0);
             Cell headerCell = header.createCell(0);
             headerCell.setCellValue("№");
             headerCell = header.createCell(1);
@@ -213,7 +208,7 @@ public class ExcelManager {
             headerCell = header.createCell(11);
             headerCell.setCellValue("материал");
             headerCell = header.createCell(12);
-            headerCell.setCellValue("примечание");*/
+            headerCell.setCellValue("примечание");
             int rN = 0;
             for (int i = 0; i < allDetails.size(); i++) {
                 var detail = allDetails.get(i);
