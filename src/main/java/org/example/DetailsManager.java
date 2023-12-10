@@ -22,11 +22,12 @@ public class DetailsManager {
 
     public static void createProjectsAndAllDetailTable(String objectPath) throws IOException {
         var materialsMap = getMaterialsMap(objectPath);
-        Converter.saveXmlByDetailsToFile(materialsMap);
+        Converter.saveXmlByDetailsToFile(materialsMap, objectPath);
         var allDetails = materialsMap.values().stream()
                 .flatMap(List::stream)
                 .toList();
-        ExcelManager.CreateFileWithAllDetails(objectPath, allDetails);
+        String excelFilePath = ExcelManager.CreateFileWithAllDetails(objectPath, allDetails);
+        System.out.println("file saved successfully: " + excelFilePath);
     }
 
     public static Map<String, List<Detail>> getMaterialsMap(String objectPath) throws IOException {

@@ -177,7 +177,7 @@ public class ExcelManager {
     }
 
 
-    public static void CreateFileWithAllDetails(String objectPath, List<Detail> allDetails) throws IOException {
+    public static String CreateFileWithAllDetails(String objectPath, List<Detail> allDetails) throws IOException {
         String[] folders = objectPath.split("\\\\");
         String fileName = folders[folders.length - 1];
         String fileLocation = objectPath +"\\"+ fileName + ".xlsx";
@@ -235,5 +235,6 @@ public class ExcelManager {
             }
             workBook.write(outputStream);
         }
+        return fileLocation;
     }
 }

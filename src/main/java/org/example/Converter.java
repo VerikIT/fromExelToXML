@@ -53,13 +53,13 @@ public class Converter {
             </project>
             """;
 
-    public static void saveXmlByDetailsToFile(Map<String, List<Detail>> materials) throws IOException {
+    public static void saveXmlByDetailsToFile(Map<String, List<Detail>> materials, String objectPath) throws IOException {
         for (var material : materials.keySet()) {
             var detailList = materials.get(material);
             var stringBuilder = getXmlByDetails(detailList);
-            Path savePath = Path.of(material + ".project");
+            Path savePath = Path.of(objectPath+"\\"+material + ".project");
             Files.writeString(savePath, stringBuilder);
-            System.out.println("file saved successfully " + savePath.toFile().getAbsolutePath());
+            System.out.println("file saved successfully: " + savePath.toFile().getAbsolutePath());
         }
     }
 
