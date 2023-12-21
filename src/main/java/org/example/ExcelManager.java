@@ -46,6 +46,11 @@ public class ExcelManager {
                         case 12 -> detail.setNote(getStringCellValue(cell));
                     }
                 }
+                if (detail.getNote().toLowerCase().contains("стр")) {
+                    double temp = detail.getHeight();
+                    detail.setHeight(detail.getWidth());
+                    detail.setWidth(temp);
+                }
                 details.add(detail);
             }
         } catch (InvalidFormatException e) {
@@ -175,14 +180,14 @@ public class ExcelManager {
     public static String CreateFileWithAllDetails(String objectPath, List<Detail> allDetails) throws IOException {
         String[] folders = objectPath.split("\\\\");
         String fileName = folders[folders.length - 1];
-        String fileLocation = objectPath +"\\"+ fileName + ".xlsx";
+        String fileLocation = objectPath + "\\" + fileName + ".xlsx";
         try (Workbook workBook = new XSSFWorkbook();
              FileOutputStream outputStream = new FileOutputStream(fileLocation)) {
 
             Sheet sheet = workBook.createSheet(fileName);
             sheet.setColumnWidth(0, 1000);
 
-            Row header = sheet.createRow(0);
+            /*Row header = sheet.createRow(0);
             Cell headerCell = header.createCell(0);
             headerCell.setCellValue("№");
             headerCell = header.createCell(1);
@@ -208,7 +213,7 @@ public class ExcelManager {
             headerCell = header.createCell(11);
             headerCell.setCellValue("материал");
             headerCell = header.createCell(12);
-            headerCell.setCellValue("примечание");
+            headerCell.setCellValue("примечание");*/
             int rN = 0;
             for (int i = 0; i < allDetails.size(); i++) {
                 var detail = allDetails.get(i);
@@ -216,14 +221,14 @@ public class ExcelManager {
                 row.createCell(0).setCellValue(i);
                 row.createCell(1).setCellValue(detail.getProductName());
                 row.createCell(2).setCellValue(detail.getName());
-                row.createCell(3).setCellValue(detail.getWidth());
-                row.createCell(4).setCellValue(detail.getHeight());
+                row.createCell(3).setCellValue(detail.getHeight());
+                row.createCell(4).setCellValue(detail.getWidth());
                 row.createCell(5).setCellValue(detail.getThickness());
                 row.createCell(6).setCellValue(detail.getAmount());
-                row.createCell(7).setCellValue((detail.getUpBand()==0.0) ? "-" : String.valueOf((detail.getUpBand())));
-                row.createCell(8).setCellValue((detail.getDownBand()==0.0) ? "-" : String.valueOf((detail.getDownBand())));
-                row.createCell(9).setCellValue((detail.getLeftBand()==0.0) ? "-" : String.valueOf((detail.getLeftBand())));
-                row.createCell(10).setCellValue((detail.getRightBand()==0.0) ? "-" : String.valueOf((detail.getRightBand())));
+                row.createCell(7).setCellValue((detail.getUpBand() == 0.0) ? "-" : String.valueOf((detail.getUpBand())));
+                row.createCell(8).setCellValue((detail.getDownBand() == 0.0) ? "-" : String.valueOf((detail.getDownBand())));
+                row.createCell(9).setCellValue((detail.getLeftBand() == 0.0) ? "-" : String.valueOf((detail.getLeftBand())));
+                row.createCell(10).setCellValue((detail.getRightBand() == 0.0) ? "-" : String.valueOf((detail.getRightBand())));
                 row.createCell(11).setCellValue(detail.getMaterial());
                 row.createCell(12).setCellValue(detail.getNote());
                 rN++;

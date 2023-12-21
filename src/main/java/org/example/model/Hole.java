@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Hole {
-    private double diameter;
     private double dimX;
     private double dimY;
+    private double diameter;
     private double deep;
 }
