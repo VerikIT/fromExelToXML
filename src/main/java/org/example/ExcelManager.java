@@ -59,7 +59,7 @@ public class ExcelManager {
         return details;
     }
 
-    public static List<Hole> readHolesFromExcel(String filePath) throws IOException {
+    public static List<Hole> readHolesFromExcel(String filePath, boolean isBackSide) throws IOException {
         List<Hole> holes = new ArrayList<>();
         try (Workbook workBook = new XSSFWorkbook(filePath)) {
             Sheet sheet = workBook.getSheetAt(START_SHEET);
@@ -76,6 +76,9 @@ public class ExcelManager {
                         case DIA_CELL -> addDiaAndDeep(cell, hole);
                     }
                 }
+                if (isBackSide && hole.getDeep()==30.0) {
+                    continue;
+                }
                 if (hole.getDeep() != 0.0 && hole.getDiameter() != 0.0) {
                     holes.add(hole);
                 }
@@ -84,35 +87,34 @@ public class ExcelManager {
         return holes;
     }
 
+
     private static void addDiaAndDeep(Cell cell, Hole hole) {
         String value = cell.getStringCellValue().replace(',', '.');
         if (value.contains("x") || value.contains("n")) {
-            parseDiaAndDeepHandleTable(value, hole);
+            parseDiaAndDeepFromTable(value, hole, 1, "x");
         } else {
-            parseDiaAndDeepAutoTable(value, hole);
+            parseDiaAndDeepFromTable(value, hole, 10, SPLITERATOR);
         }
     }
 
-    private static void parseDiaAndDeepHandleTable(String value, Hole hole) {
-        String[] values = value.split("x");
+    private static void parseDiaAndDeepFromTable(String value, Hole hole, int startIndex, String split) {
+        String[] values = value.split(split);
         if (values.length == 2) {
             double dia = Double.parseDouble(values[0]
-                    .substring(1));
-            if (dia == 18.0) {
-                hole.setDiameter(20.0);
-            } else {
-                hole.setDiameter(dia);
-            }
-            hole.setDeep(Double.parseDouble(values[1]));
+                    .substring(startIndex));
+            deepCorrection(hole, values, dia);
         } else {
             if (values[0].contains("НАСКВОЗЬ")) {
                 String oneValue = values[0].replace(" НАСКВОЗЬ", "");
-                double dia = Double.parseDouble(oneValue.substring(1));
+                double dia = Double.parseDouble(oneValue.substring(startIndex));
+                if (dia == 8.0) {
+                    dia = 7.0;
+                }
                 hole.setDiameter(dia);
                 hole.setDeep(30.0);
             } else {
                 double dia = Double.parseDouble(values[0]
-                        .substring(1));
+                        .substring(startIndex));
                 if (dia == 8.0) {
                     hole.setDiameter(dia);
                     hole.setDeep(33.0);
@@ -121,33 +123,22 @@ public class ExcelManager {
         }
     }
 
-    private static void parseDiaAndDeepAutoTable(String value, Hole hole) {
-        String[] values = value.split(SPLITERATOR);
-        if (values.length == 2) {
-            double dia = Double.parseDouble(values[0]
-                    .substring(10));
-            if (dia == 18.0) {
-                hole.setDiameter(20.0);
-            } else {
-                hole.setDiameter(dia);
-            }
-            hole.setDeep(Double.parseDouble(values[1]));
-        } else {
-
-            if (values[0].contains("НАСКВОЗЬ")) {
-                String oneValue = values[0].replace(" НАСКВОЗЬ", "");
-                double dia = Double.parseDouble(oneValue.substring(10));
-                hole.setDiameter(dia);
-                hole.setDeep(30.0);
-            } else {
-                double dia = Double.parseDouble(values[0]
-                        .substring(10));
-                if (dia == 8.0) {
-                    hole.setDiameter(dia);
-                    hole.setDeep(33.0);
-                }
-            }
+    private static void deepCorrection(Hole hole, String[] values, double dia) {
+        double deep = Double.parseDouble(values[1]);
+        if (dia == 18.0) {
+            dia = 20.0;
         }
+        if (dia == 20.0 && deep == 14) {
+            deep = 14.2;
+        } else if (dia == 15.0 && deep == 14.0) {
+            deep = 13.8;
+        } else if (dia == 5.0 && (deep == 14.0 || deep == 8.99)) {
+            deep = 11.5;
+        } else if (dia == 5.0 && deep == 8.0) {
+            deep = 8.5;
+        }
+        hole.setDiameter(dia);
+        hole.setDeep(deep);
     }
 
     private static double getDoubleCellValue(Cell cell) {

@@ -71,8 +71,13 @@ public class DetailsManager {
                 continue;
             }
             for (var sidePath : sidePathList) {
-                var holes = ExcelManager.readHolesFromExcel(sidePath.toString());
-                addHolesToSideDetail(detail, holes, sidePath);
+                String side = sidePath
+                        .toFile()
+                        .getName()
+                        .replaceFirst(".xlsx", "")
+                        .toLowerCase();
+                var holes = ExcelManager.readHolesFromExcel(sidePath.toString(), side.equalsIgnoreCase(BACK));
+                addHolesToSideDetail(detail, holes, side);
             }
 
         }
@@ -87,12 +92,7 @@ public class DetailsManager {
                 .toFile();
     }
 
-    private static void addHolesToSideDetail(Detail detail, List<Hole> holes, Path sidePath) {
-        String side = sidePath
-                .toFile()
-                .getName()
-                .replaceFirst(".xlsx", "")
-                .toLowerCase();
+    private static void addHolesToSideDetail(Detail detail, List<Hole> holes, String side) {
         switch (side) {
             case FRONT -> detail.setFrontHoles(holes);
             case BACK -> detail.setBackHoles(holes);
