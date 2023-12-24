@@ -76,7 +76,7 @@ public class ExcelManager {
                         case DIA_CELL -> addDiaAndDeep(cell, hole);
                     }
                 }
-                if (isBackSide && hole.getDeep()==30.0) {
+                if (isBackSide && hole.getDeep() == 30.0) {
                     continue;
                 }
                 if (hole.getDeep() != 0.0 && hole.getDiameter() != 0.0) {
@@ -136,6 +136,8 @@ public class ExcelManager {
             deep = 11.5;
         } else if (dia == 5.0 && deep == 8.0) {
             deep = 8.5;
+        } else if (dia == 35.0 && deep == 13.5) {
+            deep = 13.0;
         }
         hole.setDiameter(dia);
         hole.setDeep(deep);

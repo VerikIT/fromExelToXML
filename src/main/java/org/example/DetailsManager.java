@@ -54,7 +54,7 @@ public class DetailsManager {
 
     public static List<Detail> getDetails(String prodPath) throws IOException {
 
-        File prodFile = getProductPath(prodPath);
+        File prodFile = getProductFile(prodPath);
         List<Detail> details = ExcelManager.readProductDetailsFromFile(prodFile);
         var detailsPathList = Files.list(Path.of(prodPath))
                 .filter(path -> path.toFile().isDirectory())
@@ -85,7 +85,7 @@ public class DetailsManager {
     }
 
 
-    private static File getProductPath(String prodPath) throws IOException {
+    private static File getProductFile(String prodPath) throws IOException {
         return Files.list(Path.of(prodPath))
                 .filter(path -> path.toFile().isFile())
                 .findFirst().get()
