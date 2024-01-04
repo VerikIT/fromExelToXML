@@ -177,10 +177,10 @@ public class ExcelManager {
         try (Workbook workBook = new XSSFWorkbook();
              FileOutputStream outputStream = new FileOutputStream(fileLocation)) {
 
-            Sheet sheet = workBook.createSheet(fileName);
+            Sheet sheet = workBook.createSheet("Лист1");
             sheet.setColumnWidth(0, 1000);
 
-            /*Row header = sheet.createRow(0);
+            Row header = sheet.createRow(0);
             Cell headerCell = header.createCell(0);
             headerCell.setCellValue("№");
             headerCell = header.createCell(1);
@@ -206,12 +206,12 @@ public class ExcelManager {
             headerCell = header.createCell(11);
             headerCell.setCellValue("материал");
             headerCell = header.createCell(12);
-            headerCell.setCellValue("примечание");*/
-            int rN = 0;
+            headerCell.setCellValue("примечание");
+            int rN = 1; //if header is: rN = 1, if not rN = 0
             for (int i = 0; i < allDetails.size(); i++) {
                 var detail = allDetails.get(i);
                 Row row = sheet.createRow(rN);
-                row.createCell(0).setCellValue(i);
+                row.createCell(0).setCellValue(i+1);
                 row.createCell(1).setCellValue(detail.getProductName());
                 row.createCell(2).setCellValue(detail.getName());
                 row.createCell(3).setCellValue(detail.getHeight());
