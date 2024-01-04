@@ -46,7 +46,7 @@ public class ExcelManager {
                         case 12 -> detail.setNote(getStringCellValue(cell));
                     }
                 }
-                if (detail.getNote().toLowerCase().contains("стр")) {
+                if (detail.getNote()!=null&&detail.getNote().toLowerCase().contains("стр")) {
                     double temp = detail.getHeight();
                     detail.setHeight(detail.getWidth());
                     detail.setWidth(temp);

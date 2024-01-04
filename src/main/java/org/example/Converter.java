@@ -114,7 +114,7 @@ public class Converter {
         final int UNTIL_2 = 4;
         final int MULTY_2_DET = 5;
         String note = detail.getNote();
-        if (note.toLowerCase().contains("сращ")) {
+        if (note!=null&&note.toLowerCase().contains("сращ")) {
             return MULTY_2_DET;
         }
         if (thicknessBand <= 0.6) {
