@@ -38,7 +38,14 @@ public class DetailsManager {
         for (var prodPath : prodPathList) {
             var details = getDetails(prodPath.toString());
             for (var detail : details) {
-                String materialName = detail.getMaterial() + " " + detail.getThickness() + "мм";
+                String materialName;
+                String note = detail.getNote();
+                if (note!=null&&note.toLowerCase().contains("сращ")) {
+                    materialName = detail.getMaterial() + " " + detail.getThickness()/2 + "мм";
+                }else {
+                    materialName = detail.getMaterial() + " " + detail.getThickness() + "мм";
+                }
+
                 if (materials.containsKey(materialName)) {
                     var thisMatList = materials.get(materialName);
                     thisMatList.add(detail);

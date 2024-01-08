@@ -28,7 +28,7 @@ public class Converter {
                  <details>
             """;
     private static final String DETAIL_TEXT = """
-                  <detail id="%d" material="1" amount="%d" widthFull="%.1f" heightFull="%.1f" description="%s, %s" multiplicity="%d"  grain="1">
+                  <detail id="%d" material="1" amount="%d" widthFull="%.1f" heightFull="%.1f" description="%s, %s" multiplicity="%d"  grain="%d">
                     <edges joint="0">
                       <left type="kromka" param="%d"/>
                       <top type="kromka" param="%d"/>
@@ -83,6 +83,7 @@ public class Converter {
                     detail.getWidth(),
                     detail.getName(),
                     detail.getProductName(),
+                    detail.getMultiplicity(),
                     detail.getMultiplicity(),
                     findIdBand(detail, detail.getLeftBand()),
                     findIdBand(detail, detail.getUpBand()),

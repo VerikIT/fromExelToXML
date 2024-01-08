@@ -51,6 +51,10 @@ public class ExcelManager {
                     detail.setHeight(detail.getWidth());
                     detail.setWidth(temp);
                 }
+                String note = detail.getNote();
+                if (note!=null&&note.toLowerCase().contains("сращ")) {
+                    detail.setMultiplicity(2);
+                }
                 details.add(detail);
             }
         } catch (InvalidFormatException e) {
