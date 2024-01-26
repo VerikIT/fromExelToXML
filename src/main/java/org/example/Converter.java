@@ -11,6 +11,10 @@ import java.util.Locale;
 import java.util.Map;
 
 public class Converter {
+
+    public static final String CLIPPING = """
+                      <operation id="" type="clipping" cutHSize="%.1f" cutHBase="%s" edgeMaterialH="%s" cutVSize="%.1f" cutVBase="%s" edgeMaterialV="%s"/>
+            """;
     private static final String START_TEXT = """
              <?xml version="1.0" encoding="UTF-8"?>
              <project>
@@ -52,12 +56,14 @@ public class Converter {
               </viyar>
             </project>
             """;
+    private static final double MIN_DETAIL_WITH_HOLES = 70.0;
+    private static final double MIN_DETAIL_SIZE = 54;
 
     public static void saveXmlByDetailsToFile(Map<String, List<Detail>> materials, String objectPath) throws IOException {
         for (var material : materials.keySet()) {
             var detailList = materials.get(material);
             var stringBuilder = getXmlByDetails(detailList);
-            Path savePath = Path.of(objectPath+"\\"+material + ".project");
+            Path savePath = Path.of(objectPath + "\\" + material + ".project");
             Files.writeString(savePath, stringBuilder);
             System.out.println("file saved successfully: " + savePath.toFile().getAbsolutePath());
         }
@@ -76,11 +82,21 @@ public class Converter {
     private static void addDetailsToBuilder(List<Detail> detailList, StringBuilder stringBuilder) {
         int detId = 1;
         for (var detail : detailList) {
+            boolean haveHoles = false;
+            if (detail.getUpHoles() != null
+                || detail.getDownHoles() != null
+                || detail.getLeftHoles() != null
+                || detail.getRightHoles() != null
+                || detail.getFrontHoles() != null
+                || detail.getBackHoles() != null
+            ) {
+                haveHoles = true;
+            }
             String detString = String.format(Locale.US, DETAIL_TEXT,
                     detId,
                     detail.getAmount(),
-                    detail.getHeight(),
-                    detail.getWidth(),
+                    (detail.getHeight() < MIN_DETAIL_SIZE || (haveHoles && detail.getHeight() < MIN_DETAIL_WITH_HOLES)) ? detail.getHeight() + 70 : detail.getHeight(),
+                    (detail.getWidth() < MIN_DETAIL_SIZE || (haveHoles && detail.getWidth() < MIN_DETAIL_WITH_HOLES)) ? detail.getWidth() + 70 : detail.getWidth(),
                     detail.getName(),
                     detail.getProductName(),
                     detail.getMultiplicity(),
@@ -93,7 +109,7 @@ public class Converter {
 
             stringBuilder.append(detString);
             stringBuilder.append(BETWEEN_DET_OP);
-
+            addClipping(haveHoles, detail, stringBuilder);
             addOperationsToDetail(1, detail.getFrontHoles(), stringBuilder);
             addOperationsToDetail(6, detail.getBackHoles(), stringBuilder);
             addOperationsToDetail(3, detail.getUpHoles(), stringBuilder);
@@ -103,6 +119,64 @@ public class Converter {
             stringBuilder.append(BETWEEN_DETAILS);
             detId++;
         }
+    }
+
+    private static void addClipping(boolean haveHoles, Detail detail, StringBuilder stringBuilder) {
+        if (detail.getHeight() >= MIN_DETAIL_WITH_HOLES && detail.getWidth() >= MIN_DETAIL_WITH_HOLES) {
+            return;
+        }
+        double sizeH = 0.0;
+        int baseH = 0;
+        int edgeH = 0;
+        double sizeV = 0.0;
+        int baseV = 0;
+        int edgeV = 0;
+        if (detail.getHeight() < MIN_DETAIL_SIZE || (haveHoles && detail.getHeight() < MIN_DETAIL_WITH_HOLES)) {
+            /*if (detail.getRightHoles() != null) {
+                baseH = 4;
+                edgeH = findIdBand(detail, detail.getLeftBand());
+            } else {
+                baseH = 2;
+                edgeH = findIdBand(detail, detail.getRightBand());
+            }*/
+            baseH = 2;
+            edgeH = findIdBand(detail, detail.getRightBand());
+            switch (edgeH) {
+                case 0 -> sizeH = detail.getHeight();
+                case 2 -> sizeH = detail.getHeight() - 0.4;
+                case 3 -> sizeH = detail.getHeight() - 1.0;
+                case 4, 5 -> sizeH = detail.getHeight() - 2.0;
+            }
+        } else if (detail.getWidth() < MIN_DETAIL_SIZE || (haveHoles && detail.getWidth() < MIN_DETAIL_WITH_HOLES)) {
+            /*if (detail.getUpHoles() != null) {
+                baseV = 3;
+                edgeV = findIdBand(detail, detail.getDownBand());
+            } else {
+                baseV = 5;
+                edgeV = findIdBand(detail, detail.getUpBand());
+            }*/
+
+            baseV = 5;
+            edgeV = findIdBand(detail, detail.getUpBand());
+            switch (edgeV) {
+                case 0 -> sizeV = detail.getWidth();
+                case 2 -> sizeV = detail.getWidth() - 0.4;
+                case 3 -> sizeV = detail.getWidth() - 1.0;
+                case 4, 5 -> sizeV = detail.getWidth() - 2.0;
+            }
+        }
+
+
+        String clippingString = String.format(Locale.US, CLIPPING,
+                sizeH,
+                (baseH == 0) ? "" : String.valueOf(baseH),
+                (edgeH == 0) ? "" : String.valueOf(edgeH),
+                sizeV,
+                (baseV == 0) ? "" : String.valueOf(baseV),
+                (edgeV == 0) ? "" : String.valueOf(edgeV)
+        );
+        stringBuilder.append(clippingString);
+
     }
 
     private static int findIdBand(Detail detail, double thicknessBand) {
@@ -115,7 +189,7 @@ public class Converter {
         final int UNTIL_2 = 4;
         final int MULTY_2_DET = 5;
         String note = detail.getNote();
-        if (note!=null&&note.toLowerCase().contains("сращ")) {
+        if (note != null && note.toLowerCase().contains("сращ")) {
             return MULTY_2_DET;
         }
         if (thicknessBand <= 0.6) {
