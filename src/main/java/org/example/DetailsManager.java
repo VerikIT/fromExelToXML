@@ -69,9 +69,13 @@ public class DetailsManager {
 
         for (var detail : details) {
             var detPath = detailsPathList.stream()
-                    .filter(path -> detail.getName().contains(path.toFile().getName()))
+                    .filter(path -> detail.getName().equalsIgnoreCase(path.toFile().getName()))
                     .findFirst()
-                    .get();
+                    .orElse(null);
+
+            if (detPath == null) {
+                continue;
+            }
 
             var sidePathList = Files.list(detPath).toList();
             if (sidePathList.isEmpty()) {
