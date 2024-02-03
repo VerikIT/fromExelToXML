@@ -227,7 +227,7 @@ public class ExcelManager {
                 row.createCell(9).setCellValue((detail.getLeftBand() == 0.0) ? "-" : String.valueOf((detail.getLeftBand())));
                 row.createCell(10).setCellValue((detail.getRightBand() == 0.0) ? "-" : String.valueOf((detail.getRightBand())));
                 row.createCell(11).setCellValue(detail.getMaterial());
-                row.createCell(12).setCellValue(detail.getNote());
+                row.createCell(12).setCellValue((detail.getNote().isEmpty())?"-":detail.getNote());
                 rN++;
             }
             workBook.write(outputStream);
