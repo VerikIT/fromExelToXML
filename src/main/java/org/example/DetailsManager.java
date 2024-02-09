@@ -38,14 +38,7 @@ public class DetailsManager {
         for (var prodPath : prodPathList) {
             var details = getDetails(prodPath.toString());
             for (var detail : details) {
-                String materialName;
-                String note = detail.getNote();
-                if (note!=null&&note.toLowerCase().contains("сращ")) {
-                    materialName = detail.getMaterial() + " " + detail.getThickness()/2 + "мм";
-                }else {
-                    materialName = detail.getMaterial() + " " + detail.getThickness() + "мм";
-                }
-
+                String materialName = detail.getMaterial() + " " + detail.getThickness() + "мм";
                 if (materials.containsKey(materialName)) {
                     var thisMatList = materials.get(materialName);
                     thisMatList.add(detail);
@@ -68,8 +61,16 @@ public class DetailsManager {
                 .toList();
 
         for (var detail : details) {
+            String detNameWithoutDot;
+            int lastIndex = detail.getName().lastIndexOf(".");
+            if (lastIndex != -1) {
+                detNameWithoutDot = detail.getName().substring(0, lastIndex);
+            } else {
+                detNameWithoutDot = detail.getName();
+            }
+
             var detPath = detailsPathList.stream()
-                    .filter(path -> detail.getName().equalsIgnoreCase(path.toFile().getName()))
+                    .filter(path -> detNameWithoutDot.equalsIgnoreCase(path.toFile().getName()))
                     .findFirst()
                     .orElse(null);
 
@@ -90,7 +91,6 @@ public class DetailsManager {
                 var holes = ExcelManager.readHolesFromExcel(sidePath.toString(), side.equalsIgnoreCase(BACK));
                 addHolesToSideDetail(detail, holes, side);
             }
-
         }
         return details;
     }
@@ -99,7 +99,8 @@ public class DetailsManager {
     private static File getProductFile(String prodPath) throws IOException {
         return Files.list(Path.of(prodPath))
                 .filter(path -> path.toFile().isFile())
-                .findFirst().get()
+                .findFirst()
+                .get()
                 .toFile();
     }
 

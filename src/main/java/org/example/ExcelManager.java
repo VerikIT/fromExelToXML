@@ -46,14 +46,15 @@ public class ExcelManager {
                         case 12 -> detail.setNote(getStringCellValue(cell));
                     }
                 }
-                if (detail.getNote()!=null&&detail.getNote().toLowerCase().contains("стр")) {
+                if (detail.getNote() != null && detail.getNote().toLowerCase().contains("стр")) {
                     double temp = detail.getHeight();
                     detail.setHeight(detail.getWidth());
                     detail.setWidth(temp);
                 }
                 String note = detail.getNote();
-                if (note!=null&&note.toLowerCase().contains("сращ")) {
+                if (note != null && note.toLowerCase().contains("сращ")) {
                     detail.setMultiplicity(2);
+                    detail.setThickness(detail.getThickness() / 2);
                 }
                 details.add(detail);
             }
@@ -215,7 +216,7 @@ public class ExcelManager {
             for (int i = 0; i < allDetails.size(); i++) {
                 var detail = allDetails.get(i);
                 Row row = sheet.createRow(rN);
-                row.createCell(0).setCellValue(i+1);
+                row.createCell(0).setCellValue(i + 1);
                 row.createCell(1).setCellValue(detail.getProductName());
                 row.createCell(2).setCellValue(detail.getName());
                 row.createCell(3).setCellValue(detail.getHeight());
@@ -227,7 +228,7 @@ public class ExcelManager {
                 row.createCell(9).setCellValue((detail.getLeftBand() == 0.0) ? "-" : String.valueOf((detail.getLeftBand())));
                 row.createCell(10).setCellValue((detail.getRightBand() == 0.0) ? "-" : String.valueOf((detail.getRightBand())));
                 row.createCell(11).setCellValue(detail.getMaterial());
-                row.createCell(12).setCellValue((detail.getNote().isEmpty())?"-":detail.getNote());
+                row.createCell(12).setCellValue((detail.getNote().isEmpty()) ? "-" : detail.getNote());
                 rN++;
             }
             workBook.write(outputStream);
