@@ -59,12 +59,11 @@ public class DetailsManager {
         var detailsPathList = Files.list(Path.of(prodPath))
                 .filter(path -> path.toFile().isDirectory())
                 .toList();
-
         for (var detail : details) {
             String detNameWithoutDot;
-            int lastIndex = detail.getName().lastIndexOf(".");
-            if (lastIndex != -1) {
-                detNameWithoutDot = detail.getName().substring(0, lastIndex);
+            int dotIndex = detail.getName().lastIndexOf(".");
+            if (dotIndex ==detail.getName().length()-1) {
+                detNameWithoutDot = detail.getName().substring(0, dotIndex);
             } else {
                 detNameWithoutDot = detail.getName();
             }
