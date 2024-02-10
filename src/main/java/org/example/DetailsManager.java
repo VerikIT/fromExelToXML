@@ -62,7 +62,7 @@ public class DetailsManager {
         for (var detail : details) {
             String detNameWithoutDot;
             int dotIndex = detail.getName().lastIndexOf(".");
-            if (dotIndex ==detail.getName().length()-1) {
+            if (dotIndex != -1 && dotIndex == detail.getName().length() - 1) {
                 detNameWithoutDot = detail.getName().substring(0, dotIndex);
             } else {
                 detNameWithoutDot = detail.getName();
