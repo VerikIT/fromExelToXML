@@ -52,6 +52,9 @@ public class Converter {
     private static final String RABBETING = """
                       <operation id="" type="rabbeting" side="1" edge="3" shift="0" width="6" depth="100" closed="0" full="1"/>
             """;
+    private static final String SHAPING = """
+                      <operation id="" type="shapeByPattern" patternId="uShaped" edgeId="3" ext="0" shift="0" sizeH="50" sizeV="50"/>
+            """;
     private static final String BETWEEN_DETAILS = """
                     </operations>
                   </detail>
@@ -120,6 +123,7 @@ public class Converter {
             addOperationsToDetail(2, detail.getLeftHoles(), stringBuilder);
             addGrooving(detail, stringBuilder);
             addRabbeting(detail, stringBuilder);
+            addShaping(detail, stringBuilder);
             stringBuilder.append(BETWEEN_DETAILS);
             detId++;
         }
@@ -139,6 +143,13 @@ public class Converter {
         if (detail.getNote() != null &&
             detail.getNote().toLowerCase().contains("четв")) {
             stringBuilder.append(RABBETING);
+        }
+    }
+
+    private static void addShaping(Detail detail, StringBuilder stringBuilder) {
+        if (detail.getNote() != null &&
+            detail.getNote().toLowerCase().contains("сфр")) {
+            stringBuilder.append(SHAPING);
         }
     }
 
