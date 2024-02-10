@@ -46,6 +46,9 @@ public class Converter {
     private static final String OPERATION_TEXT = """
                       <operation id="" type="drilling" side="%d" xo="%.1f" yo="%.1f" d="%.1f" depth="%.1f"/>
             """;
+    private static final String GROOVING = """
+                      <operation id="" type="grooving" side="1" subtype="0" x="0" y="0" width="4" depth="100" closed="1" full="1"/>
+            """;
     private static final String BETWEEN_DETAILS = """
                     </operations>
                   </detail>
@@ -82,16 +85,12 @@ public class Converter {
     private static void addDetailsToBuilder(List<Detail> detailList, StringBuilder stringBuilder) {
         int detId = 1;
         for (var detail : detailList) {
-            boolean haveHoles = false;
-            if (detail.getUpHoles() != null
-                || detail.getDownHoles() != null
-                || detail.getLeftHoles() != null
-                || detail.getRightHoles() != null
-                || detail.getFrontHoles() != null
-                || detail.getBackHoles() != null
-            ) {
-                haveHoles = true;
-            }
+            boolean haveHoles = detail.getUpHoles() != null
+                                || detail.getDownHoles() != null
+                                || detail.getLeftHoles() != null
+                                || detail.getRightHoles() != null
+                                || detail.getFrontHoles() != null
+                                || detail.getBackHoles() != null;
             String detString = String.format(Locale.US, DETAIL_TEXT,
                     detId,
                     detail.getAmount(),
@@ -116,8 +115,19 @@ public class Converter {
             addOperationsToDetail(4, detail.getRightHoles(), stringBuilder);
             addOperationsToDetail(5, detail.getDownHoles(), stringBuilder);
             addOperationsToDetail(2, detail.getLeftHoles(), stringBuilder);
+            addGrooving(detail, stringBuilder);
             stringBuilder.append(BETWEEN_DETAILS);
             detId++;
+        }
+    }
+
+    private static void addGrooving(Detail detail, StringBuilder stringBuilder) {
+
+        if (detail.getNote() != null &&
+            (detail.getNote().toLowerCase().contains("паз")
+             || detail.getNote().toLowerCase().contains("лед")
+             || detail.getNote().toLowerCase().contains("led"))) {
+            stringBuilder.append(GROOVING);
         }
     }
 
@@ -132,13 +142,6 @@ public class Converter {
         int baseV = 0;
         int edgeV = 0;
         if (detail.getHeight() < MIN_DETAIL_SIZE || (haveHoles && detail.getHeight() < MIN_DETAIL_WITH_HOLES)) {
-            /*if (detail.getRightHoles() != null) {
-                baseH = 4;
-                edgeH = findIdBand(detail, detail.getLeftBand());
-            } else {
-                baseH = 2;
-                edgeH = findIdBand(detail, detail.getRightBand());
-            }*/
             baseH = 2;
             edgeH = findIdBand(detail, detail.getRightBand());
             switch (edgeH) {
@@ -148,14 +151,6 @@ public class Converter {
                 case 4, 5 -> sizeH = detail.getHeight() - 2.0;
             }
         } else if (detail.getWidth() < MIN_DETAIL_SIZE || (haveHoles && detail.getWidth() < MIN_DETAIL_WITH_HOLES)) {
-            /*if (detail.getUpHoles() != null) {
-                baseV = 3;
-                edgeV = findIdBand(detail, detail.getDownBand());
-            } else {
-                baseV = 5;
-                edgeV = findIdBand(detail, detail.getUpBand());
-            }*/
-
             baseV = 5;
             edgeV = findIdBand(detail, detail.getUpBand());
             switch (edgeV) {
@@ -165,8 +160,6 @@ public class Converter {
                 case 4, 5 -> sizeV = detail.getWidth() - 2.0;
             }
         }
-
-
         String clippingString = String.format(Locale.US, CLIPPING,
                 sizeH,
                 (baseH == 0) ? "" : String.valueOf(baseH),
@@ -187,10 +180,10 @@ public class Converter {
         final int UNTIL_06 = 2;
         final int UNTIL_1 = 3;
         final int UNTIL_2 = 4;
-        final int MULTY_2_DET = 5;
+        final int MULTI_2_DET = 5;
         String note = detail.getNote();
         if (note != null && note.toLowerCase().contains("сращ")) {
-            return MULTY_2_DET;
+            return MULTI_2_DET;
         }
         if (thicknessBand <= 0.6) {
             return UNTIL_06;
