@@ -8,15 +8,15 @@ import java.util.zip.ZipInputStream;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        // Використання JOptionPane для введення тексту
-//        String objectPath = JOptionPane.showInputDialog(null,
-//                "Додайте повний шлях до папки з виробами, \n" +
-//                "наприклад: D:\\Проекты солид\\155. Кухня(Виговського)\\в цех\\сол");
-        String objectPath = null;
-        File zipFile = findZipFile();
-        if (zipFile != null) {
-            objectPath=unzippingFile(zipFile);
-        }
+//         Використання JOptionPane для введення тексту
+        String objectPath = JOptionPane.showInputDialog(null,
+                "Додайте повний шлях до папки з виробами, \n" +
+                "наприклад: D:\\Проекты солид\\155. Кухня(Виговського)\\в цех\\сол");
+//        String objectPath = null;
+//        File zipFile = findZipFile();
+//        if (zipFile != null) {
+//            objectPath=unzippingFile(zipFile);
+//        }
 
         if (objectPath != null) {
             DetailsManager.createProjectsAndAllDetailTable(objectPath);
@@ -25,14 +25,14 @@ public class Main {
     }
 
     private static String unzippingFile(File zipFile) throws IOException {
-        String fileZip  = zipFile.getAbsolutePath();
+        String fileZip = zipFile.getAbsolutePath();
         String unzipDir = fileZip.substring(0, fileZip.lastIndexOf(".zip"));
         File destDir = new File(unzipDir);
 
         byte[] buffer = new byte[1024];
         ZipInputStream zis = new ZipInputStream(new FileInputStream(fileZip), Charset.forName("windows-1251"));
         ZipEntry zipEntry = zis.getNextEntry();
-        
+
         while (zipEntry != null) {
             File newFile = newFile(destDir, zipEntry);
             if (zipEntry.isDirectory()) {
