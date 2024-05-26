@@ -9,14 +9,14 @@ import java.util.zip.ZipInputStream;
 public class Main {
     public static void main(String[] args) throws IOException {
         // Використання JOptionPane для введення тексту
-        String objectPath = JOptionPane.showInputDialog(null,
-                "Додайте повний шлях до папки з виробами, \n" +
-                "наприклад: D:\\Проекты солид\\155. Кухня(Виговського)\\в цех\\сол");
-//        String objectPath = null;
-//        File zipFile = findZipFile();
-//        if (zipFile != null) {
-//            objectPath=unzippingFile(zipFile);
-//        }
+//        String objectPath = JOptionPane.showInputDialog(null,
+//                "Додайте повний шлях до папки з виробами, \n" +
+//                "наприклад: D:\\Проекты солид\\155. Кухня(Виговського)\\в цех\\сол");
+        String objectPath = null;
+        File zipFile = findZipFile();
+        if (zipFile != null) {
+            objectPath=unzippingFile(zipFile);
+        }
 
         if (objectPath != null) {
             DetailsManager.createProjectsAndAllDetailTable(objectPath);
