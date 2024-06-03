@@ -112,9 +112,6 @@ public class ExcelManager {
             if (values[0].contains("НАСКВОЗЬ")) {
                 String oneValue = values[0].replace(" НАСКВОЗЬ", "");
                 double dia = Double.parseDouble(oneValue.substring(startIndex));
-                if (dia == 8.0) {
-                    dia = 7.0;
-                }
                 hole.setDiameter(dia);
                 hole.setDeep(30.0);
             } else {
