@@ -87,7 +87,7 @@ public class DetailsManager {
                         .getName()
                         .replaceFirst(".xlsx", "")
                         .toLowerCase();
-                var holes = ExcelManager.readHolesFromExcel(sidePath.toString(), side.equalsIgnoreCase(BACK));
+                var holes = ExcelManager.readHolesFromExcel(sidePath.toString(), side.equalsIgnoreCase(BACK), side.equalsIgnoreCase(LEFT), side.equalsIgnoreCase(DOWN), detail );
                 addHolesToSideDetail(detail, holes, side);
             }
         }

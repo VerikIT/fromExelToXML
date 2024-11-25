@@ -64,7 +64,7 @@ public class ExcelManager {
         return details;
     }
 
-    public static List<Hole> readHolesFromExcel(String filePath, boolean isBackSide) throws IOException {
+    public static List<Hole> readHolesFromExcel(String filePath, boolean isBackSide, boolean isLeftSide, boolean isDownSide, Detail detail) throws IOException {
         List<Hole> holes = new ArrayList<>();
         try (Workbook workBook = new XSSFWorkbook(filePath)) {
             Sheet sheet = workBook.getSheetAt(START_SHEET);
@@ -84,12 +84,31 @@ public class ExcelManager {
                 if (isBackSide && hole.getDeep() == 30.0) {
                     continue;
                 }
+                changeReferencePoint(isLeftSide, isDownSide, detail, hole);
                 if (hole.getDeep() != 0.0 && hole.getDiameter() != 0.0) {
                     holes.add(hole);
                 }
             }
         }
         return holes;
+    }
+
+    private static void changeReferencePoint(boolean isLeftSide, boolean isDownSide, Detail detail, Hole hole) {
+        String note = detail.getNote();
+        if (isLeftSide) {
+            if (note != null && note.toLowerCase().contains("сращ")) {
+                hole.setDimX(detail.getThickness() * 2 - hole.getDimX());
+            } else {
+                hole.setDimX(detail.getThickness() - hole.getDimX());
+            }
+        }
+        if (isDownSide) {
+            if (note != null && note.toLowerCase().contains("сращ")) {
+                hole.setDimY(detail.getThickness() * 2 - hole.getDimY());
+            } else {
+                hole.setDimY(detail.getThickness() - hole.getDimY());
+            }
+        }
     }
 
 
